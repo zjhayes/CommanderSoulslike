@@ -79,7 +79,7 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
         if (player == null)
             return;
 
-        player.AnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount);
+        player.AnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.PlayerNetwork.isSprinting.Value);
     }
 
     private void HandleCameraMovementInput()
@@ -135,7 +135,7 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
             playerControls.PlayerCamera.Movement.performed += i => cameraInput = i.ReadValue<Vector2>();
             playerControls.PlayerActions.Dodge.performed += i => dodgeInput = true;
             playerControls.PlayerActions.Sprint.performed += i => sprintInput = true;
-            playerControls.PlayerActions.Sprint.canceled += i => sprintInput = true;
+            playerControls.PlayerActions.Sprint.canceled += i => sprintInput = false;
         }
 
         playerControls.Enable();

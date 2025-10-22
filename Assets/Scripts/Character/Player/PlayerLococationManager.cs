@@ -43,7 +43,7 @@ public class PlayerLococationManager : CharacterLocomotionManager
             verticalMovement = player.PlayerNetwork.verticalMovement.Value;
             moveAmount = player.PlayerNetwork.moveAmount.Value;
 
-            player.AnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount);
+            player.AnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.PlayerNetwork.isSprinting.Value);
         }
     }
 

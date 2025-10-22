@@ -6,18 +6,29 @@ public class CharacterAnimatorManager : MonoBehaviour
     public const float CROSS_FADE_TIME = 0.2f;
 
     CharacterManager character;
-    float vertical;
-    float horizontal;
+    int vertical;
+    int horizontal;
 
     protected virtual void Awake()
     {
         character = GetComponent<CharacterManager>();
+
+        vertical = Animator.StringToHash("Vertical");
+        horizontal = Animator.StringToHash("Horizontal");
     }
 
-    public void UpdateAnimatorMovementParameters(float horizontalValue, float verticalValue)
+    public void UpdateAnimatorMovementParameters(float horizontalMovement, float verticalMovement, bool isSprinting)
     {
-        character.Animator.SetFloat("Horizontal", horizontalValue, 0.1f, Time.deltaTime);
-        character.Animator.SetFloat("Vertical", verticalValue, 0.1f, Time.deltaTime);
+        float horizontalAmount = horizontalMovement;
+        float verticalAmount = verticalMovement;
+
+        if (isSprinting)
+        {
+            verticalAmount = 2;
+        }
+
+        character.Animator.SetFloat(horizontal, horizontalAmount, 0.1f, Time.deltaTime);
+        character.Animator.SetFloat(vertical, verticalAmount, 0.1f, Time.deltaTime);
     }
 
     public virtual void PlayTargetActionAnimation(string targetAnimation, bool isPerformingAction, bool applyRootMotion = true, bool canRotate = false, bool canMove = false)

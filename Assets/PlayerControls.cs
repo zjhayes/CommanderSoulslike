@@ -352,7 +352,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""id"": ""7e83e074-7287-4d82-b62b-415ad950f57a"",
                     ""expectedControlType"": """",
                     ""processors"": """",
-                    ""interactions"": ""Tap"",
+                    ""interactions"": """",
                     ""initialStateCheck"": false
                 },
                 {
@@ -361,7 +361,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""id"": ""69b3d502-cac5-4d9f-97f5-d5e212b99b5b"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Hold"",
+                    ""interactions"": """",
                     ""initialStateCheck"": false
                 }
             ],
@@ -380,7 +380,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""3b4b598c-79cd-468e-9614-c4f5485915da"",
-                    ""path"": ""<Keyboard>/leftShift"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -391,7 +391,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""5b31860b-7756-45fc-8601-1fa1f071c6cf"",
-                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
