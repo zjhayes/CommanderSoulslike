@@ -100,7 +100,6 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
 
     private void HandleSprintInput()
     {
-        Debug.Log(sprintInput);
         if (sprintInput)
         {
             player.LocomotionManager.HandleSprinting();
