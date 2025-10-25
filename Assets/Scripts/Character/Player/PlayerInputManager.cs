@@ -41,7 +41,7 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
 
     private void OnSceneChange(Scene oldScene, Scene newScene)
     {
-        if (newScene.buildIndex == WorldSaveGameManager.Instance.WorldSceneIndex)
+        if (newScene.buildIndex == PersistenceManager.Instance.WorldSceneIndex)
         {
             // Enable controls in world scenes.
             Instance.enabled = true;
