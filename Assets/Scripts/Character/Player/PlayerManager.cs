@@ -52,6 +52,7 @@ public class PlayerManager : CharacterManager
 
             playerNetworkManager.currentStamina.OnValueChanged += PlayerUIManager.Instance.HUD.SetNewStaminaValue;
             playerNetworkManager.currentStamina.OnValueChanged += playerStatsManager.ResetStaminaRegenTimer;
+            PersistenceManager.Instance.Player = this;
 
             playerNetworkManager.maxStamina.Value = playerStatsManager.CalculateStaminaBasedOnEnduranceLevel(playerNetworkManager.endurance.Value);
             playerNetworkManager.currentStamina.Value = playerStatsManager.CalculateStaminaBasedOnEnduranceLevel(playerNetworkManager.endurance.Value);
@@ -73,5 +74,6 @@ public class PlayerManager : CharacterManager
 
         Vector3 playerPosition = new Vector3(currentCharacterData.xPosition, currentCharacterData.yPosition, currentCharacterData.zPosition);
         transform.position = playerPosition;
+        Physics.SyncTransforms();
     }
 }

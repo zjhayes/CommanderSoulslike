@@ -5,7 +5,7 @@ public class CharacterSaveData
 {
     // Primitives only.
     [Header("Character Name")]
-    public string characterName;
+    public string characterName = "Character";
 
     [Header("Time Played")]
     public float secondsPlayed;

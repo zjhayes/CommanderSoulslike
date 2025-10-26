@@ -4,6 +4,10 @@ public class Singleton<T> : MonoBehaviour where T : Component
 {
     private static T instance;
 
+    [Header("Singleton")]
+    [SerializeField]
+    protected bool persistent = true;
+
     public static T Instance
     {
         get
@@ -14,8 +18,7 @@ public class Singleton<T> : MonoBehaviour where T : Component
 
                 if(instance == null)
                 {
-                    GameObject obj = new GameObject();
-                    obj.name = typeof(T).Name;
+                    GameObject obj = new GameObject(typeof(T).Name);
                     instance = obj.AddComponent<T>();
                 }
             }
@@ -26,13 +29,14 @@ public class Singleton<T> : MonoBehaviour where T : Component
 
     protected virtual void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this as T;
-            // Keep alive for duration of game.
-            DontDestroyOnLoad(gameObject);
+
+            if (persistent)
+                DontDestroyOnLoad(gameObject);
         }
-        else
+        else if (instance != this)
         {
             Destroy(gameObject);
         }

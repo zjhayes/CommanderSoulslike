@@ -30,6 +30,9 @@ public class PersistenceManager : Singleton<PersistenceManager>
     private SaveFileDataWriter saveFileDataWriter;
     private Dictionary<CharacterSlot, Action<CharacterSaveData>> characterSlotSetters;
 
+    public CharacterSlot CurrentSlot { get { return currentSlot; } set { currentSlot = value; } }
+    public PlayerManager Player { get { return player; } set { player = value; } }
+
     protected override void Awake()
     {
         base.Awake();
@@ -80,10 +83,35 @@ public class PersistenceManager : Singleton<PersistenceManager>
         fileName = GetSlotFileName(currentSlot);
     }
 
-    public void CreateNewGame()
+    public void AttemptToCreateNewGame()
     {
-        DecideCharacterFileName();
-        currentGameData = new CharacterSaveData();
+        saveFileDataWriter = new SaveFileDataWriter
+        {
+            saveDataDirectoryPath = Application.persistentDataPath
+        };
+        
+        // Loop through all character slots.
+        foreach (CharacterSlot slot in Enum.GetValues(typeof(CharacterSlot)))
+        {
+            string slotFileName = GetSlotFileName(slot);
+            saveFileDataWriter.saveFileName = slotFileName;
+
+            // Check if the save file for this slot already exists.
+            if (!saveFileDataWriter.SaveFileExists())
+            {
+                Debug.Log($"Creating new game in slot: {slotFileName}");
+
+                currentSlot = slot;
+                currentGameData = new CharacterSaveData();
+
+                StartCoroutine(LoadWorld());
+                return;
+            }
+        }
+
+        // If all slots are full...
+        Debug.LogWarning("All save slots are occupied. Cannot create a new game.");
+        TitleScreenManager.Instance.DisplayNoFreeSaveSlotsPopUp();
     }
 
     public void LoadGame()
@@ -135,6 +163,8 @@ public class PersistenceManager : Singleton<PersistenceManager>
     public IEnumerator LoadWorld()
     {
         AsyncOperation loadOperation = SceneManager.LoadSceneAsync(worldSceneIndex);
+
+        player.PushPlayerData(ref currentGameData);
 
         yield return null;
     }

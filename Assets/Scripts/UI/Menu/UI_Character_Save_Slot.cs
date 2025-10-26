@@ -35,5 +35,9 @@ public class UI_Save_Slot : MonoBehaviour
         }
     }
 
-
+    public void LoadGameFromSaveSlot()
+    {
+        PersistenceManager.Instance.CurrentSlot = saveSlot;
+        PersistenceManager.Instance.LoadGame();
+    }
 }
