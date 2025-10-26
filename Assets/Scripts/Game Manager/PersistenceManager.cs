@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,19 +15,44 @@ public class PersistenceManager : Singleton<PersistenceManager>
     [SerializeField]  bool loadGame = false;
 
     [Header("Character Slots")]
-    [SerializeField] CharacterSaveData characterSlot01;
-    [SerializeField] CharacterSaveData characterSlot02;
-    [SerializeField] CharacterSaveData characterSlot03;
-    [SerializeField] CharacterSaveData characterSlot04;
-    [SerializeField] CharacterSaveData characterSlot05;
-    [SerializeField] CharacterSaveData characterSlot06;
-    [SerializeField] CharacterSaveData characterSlot07;
-    [SerializeField] CharacterSaveData characterSlot08;
-    [SerializeField] CharacterSaveData characterSlot09;
-    [SerializeField] CharacterSaveData characterSlot10;
+    public CharacterSaveData characterSlot01;
+    public CharacterSaveData characterSlot02;
+    public CharacterSaveData characterSlot03;
+    public CharacterSaveData characterSlot04;
+    public CharacterSaveData characterSlot05;
+    public CharacterSaveData characterSlot06;
+    public CharacterSaveData characterSlot07;
+    public CharacterSaveData characterSlot08;
+    public CharacterSaveData characterSlot09;
+    public CharacterSaveData characterSlot10;
 
     private string fileName;
     private SaveFileDataWriter saveFileDataWriter;
+    private Dictionary<CharacterSlot, Action<CharacterSaveData>> characterSlotSetters;
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        characterSlotSetters = new Dictionary<CharacterSlot, Action<CharacterSaveData>>
+        {
+            { CharacterSlot.CharacterSlot_01, data => characterSlot01 = data },
+            { CharacterSlot.CharacterSlot_02, data => characterSlot02 = data },
+            { CharacterSlot.CharacterSlot_03, data => characterSlot03 = data },
+            { CharacterSlot.CharacterSlot_04, data => characterSlot04 = data },
+            { CharacterSlot.CharacterSlot_05, data => characterSlot05 = data },
+            { CharacterSlot.CharacterSlot_06, data => characterSlot06 = data },
+            { CharacterSlot.CharacterSlot_07, data => characterSlot07 = data },
+            { CharacterSlot.CharacterSlot_08, data => characterSlot08 = data },
+            { CharacterSlot.CharacterSlot_09, data => characterSlot09 = data },
+            { CharacterSlot.CharacterSlot_10, data => characterSlot10 = data },
+        };
+    }
+
+    private void Start()
+    {
+        LoadAllSaveSlots();
+    }
 
     private void Update()
     {
@@ -41,45 +68,18 @@ public class PersistenceManager : Singleton<PersistenceManager>
         }
     }
 
+    public string GetSlotFileName(CharacterSlot currentSlot)
+    {
+        return CharacterSlotNames.TryGetValue(currentSlot, out var name)
+            ? name
+            : "UnknownSlot";
+    }
+
     private void DecideCharacterFileName()
     {
-        switch (currentSlot)
-        {
-            case CharacterSlot.CharacterSlot_01:
-                fileName = "CharacterSlot_01";
-                break;
-            case CharacterSlot.CharacterSlot_02:
-                fileName = "CharacterSlot_02";
-                break;
-            case CharacterSlot.CharacterSlot_03:
-                fileName = "CharacterSlot_03";
-                break;
-            case CharacterSlot.CharacterSlot_04:
-                fileName = "CharacterSlot_04";
-                break;
-            case CharacterSlot.CharacterSlot_05:
-                fileName = "CharacterSlot_05";
-                break;
-            case CharacterSlot.CharacterSlot_06:
-                fileName = "CharacterSlot_06";
-                break;
-            case CharacterSlot.CharacterSlot_07:
-                fileName = "CharacterSlot_07";
-                break;
-            case CharacterSlot.CharacterSlot_08:
-                fileName = "CharacterSlot_08";
-                break;
-            case CharacterSlot.CharacterSlot_09:
-                fileName = "CharacterSlot_09";
-                break;
-            case CharacterSlot.CharacterSlot_10:
-                fileName = "CharacterSlot_10";
-                break;
-            default:
-                throw new System.Exception("Unable to determine file slot.");
-        }
+        fileName = GetSlotFileName(currentSlot);
     }
-    
+
     public void CreateNewGame()
     {
         DecideCharacterFileName();
@@ -108,7 +108,30 @@ public class PersistenceManager : Singleton<PersistenceManager>
 
         saveFileDataWriter.CreateNewSaveFile(currentGameData);
     }
-    
+
+    private void LoadAllSaveSlots()
+    {
+        saveFileDataWriter = new SaveFileDataWriter
+        {
+            saveDataDirectoryPath = Application.persistentDataPath
+        };
+
+        foreach (CharacterSlot slot in Enum.GetValues(typeof(CharacterSlot)))
+        {
+            saveFileDataWriter.saveFileName = GetSlotFileName(slot);
+            CharacterSaveData saveData = saveFileDataWriter.LoadSaveFile();
+
+            if (characterSlotSetters.TryGetValue(slot, out var setter))
+            {
+                setter(saveData);
+            }
+            else
+            {
+                Debug.LogWarning($"No field mapped for {slot}");
+            }
+        }
+    }
+
     public IEnumerator LoadWorld()
     {
         AsyncOperation loadOperation = SceneManager.LoadSceneAsync(worldSceneIndex);
@@ -120,4 +143,18 @@ public class PersistenceManager : Singleton<PersistenceManager>
     { 
         get { return worldSceneIndex; } 
     }
+
+    private static readonly Dictionary<CharacterSlot, string> CharacterSlotNames = new()
+    {
+        { CharacterSlot.CharacterSlot_01, "CharacterSlot_01" },
+        { CharacterSlot.CharacterSlot_02, "CharacterSlot_02" },
+        { CharacterSlot.CharacterSlot_03, "CharacterSlot_03" },
+        { CharacterSlot.CharacterSlot_04, "CharacterSlot_04" },
+        { CharacterSlot.CharacterSlot_05, "CharacterSlot_05" },
+        { CharacterSlot.CharacterSlot_06, "CharacterSlot_06" },
+        { CharacterSlot.CharacterSlot_07, "CharacterSlot_07" },
+        { CharacterSlot.CharacterSlot_08, "CharacterSlot_08" },
+        { CharacterSlot.CharacterSlot_09, "CharacterSlot_09" },
+        { CharacterSlot.CharacterSlot_10, "CharacterSlot_10" },
+    };
 }
