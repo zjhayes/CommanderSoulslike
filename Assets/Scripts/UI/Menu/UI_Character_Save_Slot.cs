@@ -40,4 +40,9 @@ public class UI_Save_Slot : MonoBehaviour
         PersistenceManager.Instance.CurrentSlot = saveSlot;
         PersistenceManager.Instance.LoadGame();
     }
+
+    public void SelectCurrentSlot()
+    {
+        TitleScreenManager.Instance.SelectSaveSlot(saveSlot);
+    }
 }

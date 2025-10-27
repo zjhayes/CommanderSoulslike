@@ -3,6 +3,9 @@ using UnityEngine;
 [System.Serializable]
 public class CharacterSaveData
 {
+    [Header("Scene Data")]
+    public int sceneIndex = 1;
+
     // Primitives only.
     [Header("Character Name")]
     public string characterName = "Character";

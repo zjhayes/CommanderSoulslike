@@ -13,10 +13,17 @@ public class TitleScreenManager : Singleton<TitleScreenManager>
     [SerializeField] Button mainMenuNewGameButton;
     [SerializeField] Button mainMenuLoadGameButton;
     [SerializeField] Button loadMenuReturnButton;
+    [SerializeField] Button noSaveSlotsOkayButton;
+    [SerializeField] Button deleteSaveSlotPopUpConfirmButton;
 
     [Header("Pop Ups")]
     [SerializeField] GameObject noSaveSlotsPopUp;
-    [SerializeField] Button noSaveSlotsOkayButton;
+    [SerializeField] GameObject deleteSaveSlotPopUp;
+
+    [Header("Save Slots")]
+    [SerializeField] CharacterSlot currentSelectedSlot = CharacterSlot.NO_SLOT;
+
+    public CharacterSlot SelectedSlot { get { return currentSelectedSlot; } set { currentSelectedSlot = value; } }
 
     protected override void Awake()
     {
@@ -49,7 +56,6 @@ public class TitleScreenManager : Singleton<TitleScreenManager>
 
     public void DisplayNoFreeSaveSlotsPopUp()
     {
-        mainMenu.SetActive(false);
         noSaveSlotsPopUp.SetActive(true);
         noSaveSlotsOkayButton.Select();
     }
@@ -57,7 +63,45 @@ public class TitleScreenManager : Singleton<TitleScreenManager>
     public void CloseNoFreeSaveSlotsPopUp()
     {
         noSaveSlotsPopUp.SetActive(false);
-        mainMenu.SetActive(true);
         mainMenuNewGameButton.Select();
+    }
+
+    public void SelectSaveSlot(CharacterSlot slot)
+    {
+        currentSelectedSlot = slot;
+    }
+
+    public void SelectNoSlot()
+    {
+        currentSelectedSlot = CharacterSlot.NO_SLOT;
+    }
+
+    public void AttemptToDeleteSaveSlot()
+    {
+        if (currentSelectedSlot != CharacterSlot.NO_SLOT)
+        {
+            deleteSaveSlotPopUp.SetActive(true);
+            deleteSaveSlotPopUpConfirmButton.Select();
+        }
+    }
+
+    public void DeleteSaveSlot()
+    {
+        deleteSaveSlotPopUp.SetActive(false);
+        PersistenceManager.Instance.DeleteGame(currentSelectedSlot);
+        RefreshSaveSlotList();
+        loadMenuReturnButton.Select();
+    }
+
+    public void CloseDeleteSaveSlotPopUp()
+    {
+        deleteSaveSlotPopUp.SetActive(false);
+        loadMenuReturnButton.Select();
+    }
+
+    private void RefreshSaveSlotList()
+    {
+        loadGameMenu.SetActive(false);
+        loadGameMenu.SetActive(true);
     }
 }

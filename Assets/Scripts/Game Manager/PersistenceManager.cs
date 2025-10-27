@@ -93,6 +93,9 @@ public class PersistenceManager : Singleton<PersistenceManager>
         // Loop through all character slots.
         foreach (CharacterSlot slot in Enum.GetValues(typeof(CharacterSlot)))
         {
+            if (slot == CharacterSlot.NO_SLOT) 
+                continue;
+
             string slotFileName = GetSlotFileName(slot);
             saveFileDataWriter.saveFileName = slotFileName;
 
@@ -128,13 +131,28 @@ public class PersistenceManager : Singleton<PersistenceManager>
     public void SaveGame()
     {
         DecideCharacterFileName();
-        saveFileDataWriter = new SaveFileDataWriter();
-        saveFileDataWriter.saveDataDirectoryPath = Application.persistentDataPath;
-        saveFileDataWriter.saveFileName = fileName;
+        saveFileDataWriter = new SaveFileDataWriter()
+        {
+            saveDataDirectoryPath = Application.persistentDataPath,
+            saveFileName = fileName,
+        };
 
         player.PullPlayerData(ref currentGameData);
 
         saveFileDataWriter.CreateNewSaveFile(currentGameData);
+    }
+
+    public void DeleteGame(CharacterSlot slot)
+    {
+        string fileToDelete = GetSlotFileName(slot);
+
+        saveFileDataWriter = new SaveFileDataWriter()
+        {
+            saveDataDirectoryPath = Application.persistentDataPath,
+            saveFileName = fileToDelete,
+        };
+        saveFileDataWriter.DeleteSaveFile();
+
     }
 
     private void LoadAllSaveSlots()
@@ -146,6 +164,9 @@ public class PersistenceManager : Singleton<PersistenceManager>
 
         foreach (CharacterSlot slot in Enum.GetValues(typeof(CharacterSlot)))
         {
+            if (slot == CharacterSlot.NO_SLOT)
+                continue;
+
             saveFileDataWriter.saveFileName = GetSlotFileName(slot);
             CharacterSaveData saveData = saveFileDataWriter.LoadSaveFile();
 
@@ -162,7 +183,7 @@ public class PersistenceManager : Singleton<PersistenceManager>
 
     public IEnumerator LoadWorld()
     {
-        AsyncOperation loadOperation = SceneManager.LoadSceneAsync(worldSceneIndex);
+        AsyncOperation loadOperation = SceneManager.LoadSceneAsync(currentGameData.sceneIndex);
 
         player.PushPlayerData(ref currentGameData);
 
