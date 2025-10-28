@@ -21,6 +21,7 @@ public class PlayerLococationManager : CharacterLocomotionManager
     [Header("Dodge")]
     [SerializeField] Vector3 rollDirection;
     [SerializeField] float dodgeStaminaCost = 5;
+    [SerializeField] float jumpStaminaCost = 5;
 
     protected override void Awake()
     {
@@ -141,7 +142,7 @@ public class PlayerLococationManager : CharacterLocomotionManager
         }
     }
 
-    public void AttemptToPerformDodge()
+    public void AttemptToDodge()
     {
         if (player.IsPerformingAction)
             return;
@@ -169,5 +170,31 @@ public class PlayerLococationManager : CharacterLocomotionManager
         }
 
         player.PlayerNetwork.currentStamina.Value -= dodgeStaminaCost;
+    }
+
+    public void AttemptToJump()
+    {
+        if (player.IsPerformingAction)
+            return;
+
+        if (player.PlayerNetwork.currentStamina.Value <= 0)
+            return;
+
+        if (player.IsJumping)
+            return;
+
+        if (!player.IsGrounded)
+            return;
+
+        player.AnimatorManager.PlayTargetActionAnimation("Main_Jump_01", false);
+
+        player.IsJumping = true;
+
+        player.PlayerNetwork.currentStamina.Value -= jumpStaminaCost;
+    }
+
+    public void ApplyJumpingVelocity()
+    {
+
     }
 }

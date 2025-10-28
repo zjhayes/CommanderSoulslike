@@ -9,6 +9,8 @@ public class CharacterManager : NetworkBehaviour
 
     // Flags.
     bool isPerformingAction = false;
+    bool isGrounded = true;
+    bool isJumping = false;
     bool canRotate = true;
     bool canMove = true;
     bool applyRootMotion = false;
@@ -17,6 +19,8 @@ public class CharacterManager : NetworkBehaviour
     public Animator Animator { get { return animator; } }
     public CharacterNetworkManager CharacterNetwork { get { return characterNetworkManager; } }
     public bool IsPerformingAction { get { return isPerformingAction; } set { isPerformingAction = value; } }
+    public bool IsGrounded { get { return isGrounded; } set { isGrounded = value; } }
+    public bool IsJumping { get { return isJumping; } set { isJumping = value; } }
     public bool CanRotate { get { return canRotate; } set { canRotate = value; } }
     public bool CanMove { get { return canMove; } set { canMove = value; } }
     public bool ApplyRootMotion { get { return applyRootMotion; } set { applyRootMotion = value; } }
@@ -33,6 +37,7 @@ public class CharacterManager : NetworkBehaviour
 
     protected virtual void Update()
     {
+        animator.SetBool("IsGrounded", isGrounded);
         if (IsOwner)
         {
             characterNetworkManager.position.Value = transform.position;

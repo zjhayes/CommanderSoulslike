@@ -20,6 +20,7 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
     [Header("Player Action Input")]
     [SerializeField] bool dodgeInput = false;
     [SerializeField] bool sprintInput = false;
+    [SerializeField] bool jumpInput = false;
 
     public PlayerManager Player {  get { return player; } set { player = value; } }
     public float VerticalInput { get { return verticalInput; } }
@@ -94,7 +95,7 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
         {
             dodgeInput = false;
 
-            player.LocomotionManager.AttemptToPerformDodge();
+            player.LocomotionManager.AttemptToDodge();
         }
     }
 
@@ -107,6 +108,15 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
         else
         {
             player.PlayerNetwork.isSprinting.Value = false;
+        }
+    }
+
+    private void HandleJumpInput()
+    {
+        if (jumpInput)
+        {
+            jumpInput = false;
+            player.LocomotionManager.AttemptToJump();
         }
     }
 
@@ -136,6 +146,7 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
             playerControls.PlayerActions.Dodge.performed += i => dodgeInput = true;
             playerControls.PlayerActions.Sprint.performed += i => sprintInput = true;
             playerControls.PlayerActions.Sprint.canceled += i => sprintInput = false;
+            playerControls.PlayerActions.Jump.performed += i => jumpInput = true;
         }
 
         playerControls.Enable();
