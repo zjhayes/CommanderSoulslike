@@ -59,6 +59,7 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
         HandleCameraMovementInput();
         HandleDodgeInput();
         HandleSprintInput();
+        HandleJumpInput();
     }
 
     private void HandleMovementInput()
